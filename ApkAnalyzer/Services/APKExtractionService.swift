@@ -70,7 +70,7 @@ final class APKExtractionService {
         let packageName = parseSingleValue(from: badging, key: "package: name")
         let versionName = parseSingleValue(from: badging, key: "versionName")
         let versionCode = parseSingleValue(from: badging, key: "versionCode")
-        let minSDK = parseSingleValue(from: badging, key: "sdkVersion")
+        let minSDK = parseSingleValue(from: badging, key: "minSdkVersion")
         let targetSDK = parseSingleValue(from: badging, key: "targetSdkVersion")
         let deviceCompatibility = parseDeviceCompatibility(from: badging)
 
