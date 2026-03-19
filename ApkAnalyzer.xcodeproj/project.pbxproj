@@ -16,12 +16,42 @@
 		A10000010000000000000007 /* APKError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000007 /* APKError.swift */; };
 		A10000010000000000000008 /* APKExtractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000008 /* APKExtractionService.swift */; };
 		A10000010000000000000009 /* APKAnalyzerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000009 /* APKAnalyzerViewModel.swift */; };
-		A10000010000000000000010 /* ShellExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000011 /* ShellExecutor.swift */; };
 		A1000001000000000000000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000A /* Assets.xcassets */; };
 		A1000001000000000000000B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000B /* Preview Assets.xcassets */; };
 		A1000001000000000000000C /* aapt2 in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000C /* aapt2 */; };
 		A1000001000000000000000D /* apksigner.jar in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000F /* apksigner.jar */; };
+		A10000010000000000000010 /* ShellExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000011 /* ShellExecutor.swift */; };
+		A10000010000000000000012 /* ShellHelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000012 /* ShellHelperProtocol.swift */; };
+		A10000010000000000000014 /* APKIconExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000014 /* APKIconExtractor.swift */; };
+		A10000010000000000000015 /* APKVectorIconParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000015 /* APKVectorIconParser.swift */; };
+		B10000010000000000000001 /* ShellHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000010000000000000001 /* ShellHelper.swift */; };
+		B10000010000000000000002 /* ShellHelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000012 /* ShellHelperProtocol.swift */; };
+		B10000010000000000000003 /* ShellHelper.bundle in Embed Bundles */ = {isa = PBXBuildFile; fileRef = B20000010000000000000003 /* ShellHelper.bundle */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B40000010000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A50000010000000000000002 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B50000010000000000000001;
+			remoteInfo = ShellHelper;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B30000010000000000000001 /* Embed Bundles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B10000010000000000000003 /* ShellHelper.bundle in Embed Bundles */,
+			);
+			name = "Embed Bundles";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A20000010000000000000001 /* ApkAnalyzerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApkAnalyzerApp.swift; sourceTree = "<group>"; };
@@ -32,7 +62,6 @@
 		A20000010000000000000006 /* APKMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKMetadata.swift; sourceTree = "<group>"; };
 		A20000010000000000000007 /* APKError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKError.swift; sourceTree = "<group>"; };
 		A20000010000000000000008 /* APKExtractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKExtractionService.swift; sourceTree = "<group>"; };
-		A20000010000000000000011 /* ShellExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellExecutor.swift; sourceTree = "<group>"; };
 		A20000010000000000000009 /* APKAnalyzerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKAnalyzerViewModel.swift; sourceTree = "<group>"; };
 		A2000001000000000000000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A2000001000000000000000B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -40,10 +69,24 @@
 		A2000001000000000000000D /* ApkAnalyzer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ApkAnalyzer.entitlements; sourceTree = "<group>"; };
 		A2000001000000000000000E /* ApkAnalyzer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ApkAnalyzer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2000001000000000000000F /* apksigner.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = apksigner.jar; sourceTree = "<group>"; };
+		A20000010000000000000011 /* ShellExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellExecutor.swift; sourceTree = "<group>"; };
+		A20000010000000000000012 /* ShellHelperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellHelperProtocol.swift; sourceTree = "<group>"; };
+		A20000010000000000000014 /* APKIconExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKIconExtractor.swift; sourceTree = "<group>"; };
+		A20000010000000000000015 /* APKVectorIconParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKVectorIconParser.swift; sourceTree = "<group>"; };
+		B20000010000000000000001 /* ShellHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellHelper.swift; sourceTree = "<group>"; };
+		B20000010000000000000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B20000010000000000000003 /* ShellHelper.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShellHelper.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A30000010000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30000010000000000000002 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -57,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				A40000010000000000000002 /* ApkAnalyzer */,
+				B40000010000000000000003 /* ShellHelper */,
 				A40000010000000000000009 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,7 +134,10 @@
 			isa = PBXGroup;
 			children = (
 				A20000010000000000000008 /* APKExtractionService.swift */,
+				A20000010000000000000014 /* APKIconExtractor.swift */,
+				A20000010000000000000015 /* APKVectorIconParser.swift */,
 				A20000010000000000000011 /* ShellExecutor.swift */,
+				A20000010000000000000012 /* ShellHelperProtocol.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -134,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				A2000001000000000000000E /* ApkAnalyzer.app */,
+				B20000010000000000000003 /* ShellHelper.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -147,6 +195,15 @@
 			path = Tools;
 			sourceTree = "<group>";
 		};
+		B40000010000000000000003 /* ShellHelper */ = {
+			isa = PBXGroup;
+			children = (
+				B20000010000000000000001 /* ShellHelper.swift */,
+				B20000010000000000000002 /* Info.plist */,
+			);
+			path = ShellHelper;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -157,15 +214,34 @@
 				A60000010000000000000001 /* Sources */,
 				A30000010000000000000001 /* Frameworks */,
 				A60000010000000000000002 /* Resources */,
+				B30000010000000000000001 /* Embed Bundles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B40000010000000000000001 /* PBXTargetDependency */,
 			);
 			name = ApkAnalyzer;
 			productName = ApkAnalyzer;
 			productReference = A2000001000000000000000E /* ApkAnalyzer.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B50000010000000000000001 /* ShellHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B70000010000000000000001 /* Build configuration list for PBXNativeTarget "ShellHelper" */;
+			buildPhases = (
+				B60000010000000000000001 /* Sources */,
+				B30000010000000000000002 /* Frameworks */,
+				B60000010000000000000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShellHelper;
+			productName = ShellHelper;
+			productReference = B20000010000000000000003 /* ShellHelper.bundle */;
+			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
 
@@ -178,6 +254,9 @@
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					A50000010000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					B50000010000000000000001 = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
@@ -196,6 +275,7 @@
 			projectRoot = "";
 			targets = (
 				A50000010000000000000001 /* ApkAnalyzer */,
+				B50000010000000000000001 /* ShellHelper */,
 			);
 		};
 /* End PBXProject section */
@@ -209,6 +289,13 @@
 				A1000001000000000000000B /* Preview Assets.xcassets in Resources */,
 				A1000001000000000000000C /* aapt2 in Resources */,
 				A1000001000000000000000D /* apksigner.jar in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B60000010000000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,11 +315,32 @@
 				A10000010000000000000007 /* APKError.swift in Sources */,
 				A10000010000000000000008 /* APKExtractionService.swift in Sources */,
 				A10000010000000000000010 /* ShellExecutor.swift in Sources */,
+				A10000010000000000000012 /* ShellHelperProtocol.swift in Sources */,
 				A10000010000000000000009 /* APKAnalyzerViewModel.swift in Sources */,
+				A10000010000000000000014 /* APKIconExtractor.swift in Sources */,
+				A10000010000000000000015 /* APKVectorIconParser.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B60000010000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000010000000000000001 /* ShellHelper.swift in Sources */,
+				B10000010000000000000002 /* ShellHelperProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B40000010000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = maccatalyst;
+			target = B50000010000000000000001 /* ShellHelper */;
+			targetProxy = B40000010000000000000002 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A70000010000000000000004 /* Debug */ = {
@@ -288,6 +396,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -345,6 +454,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -415,6 +525,56 @@
 			};
 			name = Release;
 		};
+		B70000010000000000000002 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SRKA3M5T33;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShellHelper/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.apkanalyzer.ShellHelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		B70000010000000000000003 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SRKA3M5T33;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShellHelper/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.apkanalyzer.ShellHelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -432,6 +592,15 @@
 			buildConfigurations = (
 				A70000010000000000000006 /* Debug */,
 				A70000010000000000000007 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B70000010000000000000001 /* Build configuration list for PBXNativeTarget "ShellHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B70000010000000000000002 /* Debug */,
+				B70000010000000000000003 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

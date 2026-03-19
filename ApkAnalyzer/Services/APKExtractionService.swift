@@ -24,19 +24,19 @@ final class APKExtractionService {
     /// Runs aapt2 with the given arguments and returns stdout.
     private func runAAPT2(arguments: [String]) throws -> String {
         let toolPath = try aapt2Path()
-        let result = try ShellExecutor.run(executablePath: toolPath, arguments: arguments)
+        let result = try ShellExecutor.shared.run(toolPath, arguments: arguments)
 
         guard result.exitCode == 0 else {
-            throw APKError.executionFailed(result.stderr.isEmpty ? "aapt2 exited with code \(result.exitCode)" : result.stderr)
+            throw APKError.executionFailed(result.errorOutput.isEmpty ? "aapt2 exited with code \(result.exitCode)" : result.errorOutput)
         }
 
-        return result.stdout
+        return result.output
     }
 
     /// Runs a generic command and returns stdout.
     private func runCommand(executablePath: String, arguments: [String]) throws -> String {
-        let result = try ShellExecutor.run(executablePath: executablePath, arguments: arguments)
-        return result.stdout
+        let result = try ShellExecutor.shared.run(executablePath, arguments: arguments)
+        return result.output
     }
 
     // MARK: - Public API
@@ -79,11 +79,11 @@ final class APKExtractionService {
         let (usesFeatures, notRequiredFeatures) = parseFeatures(from: badging)
 
         // Icon
-        let iconPath = parseIconPath(from: badging)
-        var icon: UIImage? = nil
-        if let iconRelPath = iconPath {
-            icon = try? extractIcon(from: apkPath, iconRelativePath: iconRelPath)
-        }
+        let iconExtractor = APKIconExtractor()
+        let toolPath = try? aapt2Path()
+        let iconResult = iconExtractor.extractIcon(from: apkPath, badgingOutput: badging, aapt2Path: toolPath)
+        let iconPath = iconResult?.sourcePath
+        let icon = iconResult?.image
 
         // Signature
         let (signer, v1Verified) = extractSignatureInfo(from: apkPath)
@@ -204,42 +204,7 @@ final class APKExtractionService {
         return (required, notRequired)
     }
 
-    /// Parses the icon path from badging output.
-    /// Looks for the highest-density "application-icon-XXX:'path'" entry, preferring PNG over XML.
-    private func parseIconPath(from output: String) -> String? {
-        let pattern = "application-icon-(\\d+):'([^']*)'"
-        guard let regex = try? NSRegularExpression(pattern: pattern) else { return nil }
 
-        let nsOutput = output as NSString
-        let matches = regex.matches(in: output, range: NSRange(location: 0, length: nsOutput.length))
-
-        var bestDensity = 0
-        var bestPath: String?
-        var bestPngDensity = 0
-        var bestPngPath: String?
-
-        for match in matches {
-            let densityStr = nsOutput.substring(with: match.range(at: 1))
-            let path = nsOutput.substring(with: match.range(at: 2))
-            let density = Int(densityStr) ?? 0
-
-            // Prefer PNG files (adaptive icons use XML which we can't render directly)
-            if path.hasSuffix(".png") {
-                if density > bestPngDensity {
-                    bestPngDensity = density
-                    bestPngPath = path
-                }
-            }
-
-            if density > bestDensity {
-                bestDensity = density
-                bestPath = path
-            }
-        }
-
-        // Prefer PNG path; fall back to whatever is highest density
-        return bestPngPath ?? bestPath
-    }
 
     /// Parses permissions from `aapt2 dump permissions` output.
     private func parsePermissions(from output: String) -> [String] {
@@ -310,86 +275,6 @@ final class APKExtractionService {
         return nsOutput.substring(with: match.range(at: 1))
     }
 
-    // MARK: - Icon Extraction
 
-    /// Extracts the icon by unzipping the APK (which is a ZIP archive) and reading the icon file.
-    private func extractIcon(from apkPath: URL, iconRelativePath: String) throws -> UIImage? {
-        let tempDir = FileManager.default.temporaryDirectory
-            .appendingPathComponent("ApkAnalyzer_icon_\(UUID().uuidString)", isDirectory: true)
-
-        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-
-        defer {
-            try? FileManager.default.removeItem(at: tempDir)
-        }
-
-        // If the icon path points to an XML (adaptive icon), go straight to fallback
-        if iconRelativePath.hasSuffix(".xml") {
-            return try extractIconFallback(from: apkPath, tempDir: tempDir)
-        }
-
-        _ = try? ShellExecutor.run(
-            executablePath: "/usr/bin/unzip",
-            arguments: ["-o", apkPath.path, iconRelativePath, "-d", tempDir.path]
-        )
-
-        let iconFile = tempDir.appendingPathComponent(iconRelativePath)
-
-        guard FileManager.default.fileExists(atPath: iconFile.path),
-              let data = try? Data(contentsOf: iconFile),
-              let image = UIImage(data: data) else {
-            return try extractIconFallback(from: apkPath, tempDir: tempDir)
-        }
-
-        return image
-    }
-
-    /// Fallback: unzip all mipmap/drawable PNGs and pick the largest ic_launcher.
-    private func extractIconFallback(from apkPath: URL, tempDir: URL) throws -> UIImage? {
-        _ = try? ShellExecutor.run(
-            executablePath: "/usr/bin/unzip",
-            arguments: ["-o", apkPath.path, "res/mipmap-*/*.png", "res/drawable-*/*.png", "-d", tempDir.path]
-        )
-
-        // Find all ic_launcher PNG files
-        let enumerator = FileManager.default.enumerator(at: tempDir, includingPropertiesForKeys: [.fileSizeKey])
-        var bestImage: UIImage?
-        var bestSize: Int = 0
-
-        while let fileURL = enumerator?.nextObject() as? URL {
-            guard fileURL.lastPathComponent.contains("ic_launcher"),
-                  fileURL.pathExtension == "png" else { continue }
-
-            let attrs = try? FileManager.default.attributesOfItem(atPath: fileURL.path)
-            let size = (attrs?[.size] as? Int) ?? 0
-
-            if size > bestSize,
-               let data = try? Data(contentsOf: fileURL),
-               let img = UIImage(data: data) {
-                bestImage = img
-                bestSize = size
-            }
-        }
-
-        // If no ic_launcher found, try any PNG icon
-        if bestImage == nil {
-            let enumerator2 = FileManager.default.enumerator(at: tempDir, includingPropertiesForKeys: [.fileSizeKey])
-            while let fileURL = enumerator2?.nextObject() as? URL {
-                guard fileURL.pathExtension == "png" else { continue }
-
-                let attrs = try? FileManager.default.attributesOfItem(atPath: fileURL.path)
-                let size = (attrs?[.size] as? Int) ?? 0
-
-                if size > bestSize,
-                   let data = try? Data(contentsOf: fileURL),
-                   let img = UIImage(data: data) {
-                    bestImage = img
-                    bestSize = size
-                }
-            }
-        }
-
-        return bestImage
-    }
     #endif
 }
