@@ -1,0 +1,442 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000010000000000000001 /* ApkAnalyzerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000001 /* ApkAnalyzerApp.swift */; };
+		A10000010000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000002 /* ContentView.swift */; };
+		A10000010000000000000003 /* APKDropZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000003 /* APKDropZoneView.swift */; };
+		A10000010000000000000004 /* APKDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000004 /* APKDetailView.swift */; };
+		A10000010000000000000005 /* ErrorBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000005 /* ErrorBannerView.swift */; };
+		A10000010000000000000006 /* APKMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000006 /* APKMetadata.swift */; };
+		A10000010000000000000007 /* APKError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000007 /* APKError.swift */; };
+		A10000010000000000000008 /* APKExtractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000008 /* APKExtractionService.swift */; };
+		A10000010000000000000009 /* APKAnalyzerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000009 /* APKAnalyzerViewModel.swift */; };
+		A10000010000000000000010 /* ShellExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000011 /* ShellExecutor.swift */; };
+		A1000001000000000000000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000A /* Assets.xcassets */; };
+		A1000001000000000000000B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000B /* Preview Assets.xcassets */; };
+		A1000001000000000000000C /* aapt2 in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000C /* aapt2 */; };
+		A1000001000000000000000D /* apksigner.jar in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000F /* apksigner.jar */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000010000000000000001 /* ApkAnalyzerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApkAnalyzerApp.swift; sourceTree = "<group>"; };
+		A20000010000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A20000010000000000000003 /* APKDropZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKDropZoneView.swift; sourceTree = "<group>"; };
+		A20000010000000000000004 /* APKDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKDetailView.swift; sourceTree = "<group>"; };
+		A20000010000000000000005 /* ErrorBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBannerView.swift; sourceTree = "<group>"; };
+		A20000010000000000000006 /* APKMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKMetadata.swift; sourceTree = "<group>"; };
+		A20000010000000000000007 /* APKError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKError.swift; sourceTree = "<group>"; };
+		A20000010000000000000008 /* APKExtractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKExtractionService.swift; sourceTree = "<group>"; };
+		A20000010000000000000011 /* ShellExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellExecutor.swift; sourceTree = "<group>"; };
+		A20000010000000000000009 /* APKAnalyzerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKAnalyzerViewModel.swift; sourceTree = "<group>"; };
+		A2000001000000000000000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A2000001000000000000000B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		A2000001000000000000000C /* aapt2 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = aapt2; sourceTree = "<group>"; };
+		A2000001000000000000000D /* ApkAnalyzer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ApkAnalyzer.entitlements; sourceTree = "<group>"; };
+		A2000001000000000000000E /* ApkAnalyzer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ApkAnalyzer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2000001000000000000000F /* apksigner.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = apksigner.jar; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A30000010000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A40000010000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A40000010000000000000002 /* ApkAnalyzer */,
+				A40000010000000000000009 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A40000010000000000000002 /* ApkAnalyzer */ = {
+			isa = PBXGroup;
+			children = (
+				A20000010000000000000001 /* ApkAnalyzerApp.swift */,
+				A2000001000000000000000D /* ApkAnalyzer.entitlements */,
+				A40000010000000000000003 /* Models */,
+				A40000010000000000000004 /* Services */,
+				A40000010000000000000005 /* ViewModels */,
+				A40000010000000000000006 /* Views */,
+				A40000010000000000000007 /* Resources */,
+				A2000001000000000000000A /* Assets.xcassets */,
+				A40000010000000000000008 /* Preview Content */,
+			);
+			path = ApkAnalyzer;
+			sourceTree = "<group>";
+		};
+		A40000010000000000000003 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A20000010000000000000006 /* APKMetadata.swift */,
+				A20000010000000000000007 /* APKError.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A40000010000000000000004 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A20000010000000000000008 /* APKExtractionService.swift */,
+				A20000010000000000000011 /* ShellExecutor.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A40000010000000000000005 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A20000010000000000000009 /* APKAnalyzerViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A40000010000000000000006 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A20000010000000000000002 /* ContentView.swift */,
+				A20000010000000000000003 /* APKDropZoneView.swift */,
+				A20000010000000000000004 /* APKDetailView.swift */,
+				A20000010000000000000005 /* ErrorBannerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A40000010000000000000007 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A4000001000000000000000A /* Tools */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A40000010000000000000008 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				A2000001000000000000000B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		A40000010000000000000009 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A2000001000000000000000E /* ApkAnalyzer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A4000001000000000000000A /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				A2000001000000000000000C /* aapt2 */,
+				A2000001000000000000000F /* apksigner.jar */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A50000010000000000000001 /* ApkAnalyzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A70000010000000000000003 /* Build configuration list for PBXNativeTarget "ApkAnalyzer" */;
+			buildPhases = (
+				A60000010000000000000001 /* Sources */,
+				A30000010000000000000001 /* Frameworks */,
+				A60000010000000000000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ApkAnalyzer;
+			productName = ApkAnalyzer;
+			productReference = A2000001000000000000000E /* ApkAnalyzer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A50000010000000000000002 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A50000010000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A70000010000000000000001 /* Build configuration list for PBXProject "ApkAnalyzer" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A40000010000000000000001;
+			productRefGroup = A40000010000000000000009 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A50000010000000000000001 /* ApkAnalyzer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A60000010000000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000001000000000000000A /* Assets.xcassets in Resources */,
+				A1000001000000000000000B /* Preview Assets.xcassets in Resources */,
+				A1000001000000000000000C /* aapt2 in Resources */,
+				A1000001000000000000000D /* apksigner.jar in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A60000010000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000010000000000000001 /* ApkAnalyzerApp.swift in Sources */,
+				A10000010000000000000002 /* ContentView.swift in Sources */,
+				A10000010000000000000003 /* APKDropZoneView.swift in Sources */,
+				A10000010000000000000004 /* APKDetailView.swift in Sources */,
+				A10000010000000000000005 /* ErrorBannerView.swift in Sources */,
+				A10000010000000000000006 /* APKMetadata.swift in Sources */,
+				A10000010000000000000007 /* APKError.swift in Sources */,
+				A10000010000000000000008 /* APKExtractionService.swift in Sources */,
+				A10000010000000000000010 /* ShellExecutor.swift in Sources */,
+				A10000010000000000000009 /* APKAnalyzerViewModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A70000010000000000000004 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A70000010000000000000005 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		A70000010000000000000006 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ApkAnalyzer/ApkAnalyzer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"ApkAnalyzer/Preview Content\"";
+				DEVELOPMENT_TEAM = SRKA3M5T33;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.apkanalyzer.ApkAnalyzer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+			};
+			name = Debug;
+		};
+		A70000010000000000000007 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ApkAnalyzer/ApkAnalyzer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"ApkAnalyzer/Preview Content\"";
+				DEVELOPMENT_TEAM = SRKA3M5T33;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.apkanalyzer.ApkAnalyzer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A70000010000000000000001 /* Build configuration list for PBXProject "ApkAnalyzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A70000010000000000000004 /* Debug */,
+				A70000010000000000000005 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A70000010000000000000003 /* Build configuration list for PBXNativeTarget "ApkAnalyzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A70000010000000000000006 /* Debug */,
+				A70000010000000000000007 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A50000010000000000000002 /* Project object */;
+}
