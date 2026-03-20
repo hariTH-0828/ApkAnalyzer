@@ -223,7 +223,7 @@ struct AndroidPathDataParser {
     /// multiple decimal points (e.g., "1.5.3" → 1.5, 0.3).
     private static func tokenize(_ input: String) -> [Token] {
         var tokens: [Token] = []
-        var chars = Array(input)
+        let chars = Array(input)
         var i = 0
 
         while i < chars.count {
@@ -872,19 +872,12 @@ final class APKVectorIconParser {
             }
         }
 
-        // Try raster images via unzip
-        let tempDir = FileManager.default.temporaryDirectory
-            .appendingPathComponent("ApkAnalyzer_res_\(UUID().uuidString)", isDirectory: true)
-        defer { try? FileManager.default.removeItem(at: tempDir) }
-        try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-
-        for path in candidatePaths where !path.hasSuffix(".xml") {
-            _ = try? ShellExecutor.shared.run(
-                "/usr/bin/unzip", arguments: ["-o", apkPath.path, path, "-d", tempDir.path]
-            )
-            let file = tempDir.appendingPathComponent(path)
-            if let data = try? Data(contentsOf: file), let image = UIImage(data: data) {
-                return image
+        // Try raster images via native ZIP reader
+        if let zip = APKZipReader(url: apkPath) {
+            for path in candidatePaths where !path.hasSuffix(".xml") {
+                if let data = zip.extractEntry(path: path), let image = UIImage(data: data) {
+                    return image
+                }
             }
         }
 
@@ -903,17 +896,9 @@ final class APKVectorIconParser {
             if ref.hasSuffix(".xml") {
                 return renderIcon(from: apkPath, iconXmlPath: ref)
             }
-            // Try as raster image
-            let tempDir = FileManager.default.temporaryDirectory
-                .appendingPathComponent("ApkAnalyzer_res_\(UUID().uuidString)", isDirectory: true)
-            defer { try? FileManager.default.removeItem(at: tempDir) }
-            try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-
-            _ = try? ShellExecutor.shared.run(
-                "/usr/bin/unzip", arguments: ["-o", apkPath.path, ref, "-d", tempDir.path]
-            )
-            let file = tempDir.appendingPathComponent(ref)
-            if let data = try? Data(contentsOf: file) {
+            // Try as raster image via native ZIP reader
+            if let zip = APKZipReader(url: apkPath),
+               let data = zip.extractEntry(path: ref) {
                 return UIImage(data: data)
             }
         }

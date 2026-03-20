@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		52A09CDC2F6C7DF900D4F9B9 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 52A09CDB2F6C7DF900D4F9B9 /* ZIPFoundation */; };
 		A10000010000000000000001 /* ApkAnalyzerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000001 /* ApkAnalyzerApp.swift */; };
 		A10000010000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000002 /* ContentView.swift */; };
 		A10000010000000000000003 /* APKDropZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000003 /* APKDropZoneView.swift */; };
@@ -24,6 +25,7 @@
 		A10000010000000000000012 /* ShellHelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000012 /* ShellHelperProtocol.swift */; };
 		A10000010000000000000014 /* APKIconExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000014 /* APKIconExtractor.swift */; };
 		A10000010000000000000015 /* APKVectorIconParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000015 /* APKVectorIconParser.swift */; };
+		A10000010000000000000016 /* APKZipReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000016 /* APKZipReader.swift */; };
 		B10000010000000000000001 /* ShellHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000010000000000000001 /* ShellHelper.swift */; };
 		B10000010000000000000002 /* ShellHelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000012 /* ShellHelperProtocol.swift */; };
 		B10000010000000000000003 /* ShellHelper.bundle in Embed Bundles */ = {isa = PBXBuildFile; fileRef = B20000010000000000000003 /* ShellHelper.bundle */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -73,6 +75,7 @@
 		A20000010000000000000012 /* ShellHelperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellHelperProtocol.swift; sourceTree = "<group>"; };
 		A20000010000000000000014 /* APKIconExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKIconExtractor.swift; sourceTree = "<group>"; };
 		A20000010000000000000015 /* APKVectorIconParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKVectorIconParser.swift; sourceTree = "<group>"; };
+		A20000010000000000000016 /* APKZipReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKZipReader.swift; sourceTree = "<group>"; };
 		B20000010000000000000001 /* ShellHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellHelper.swift; sourceTree = "<group>"; };
 		B20000010000000000000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B20000010000000000000003 /* ShellHelper.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShellHelper.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -83,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52A09CDC2F6C7DF900D4F9B9 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,6 +140,7 @@
 				A20000010000000000000008 /* APKExtractionService.swift */,
 				A20000010000000000000014 /* APKIconExtractor.swift */,
 				A20000010000000000000015 /* APKVectorIconParser.swift */,
+				A20000010000000000000016 /* APKZipReader.swift */,
 				A20000010000000000000011 /* ShellExecutor.swift */,
 				A20000010000000000000012 /* ShellHelperProtocol.swift */,
 			);
@@ -270,6 +275,9 @@
 				Base,
 			);
 			mainGroup = A40000010000000000000001;
+			packageReferences = (
+				52A09CDA2F6C7DF900D4F9B9 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
 			productRefGroup = A40000010000000000000009 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -319,6 +327,7 @@
 				A10000010000000000000009 /* APKAnalyzerViewModel.swift in Sources */,
 				A10000010000000000000014 /* APKIconExtractor.swift in Sources */,
 				A10000010000000000000015 /* APKVectorIconParser.swift in Sources */,
+				A10000010000000000000016 /* APKZipReader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,6 +615,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		52A09CDA2F6C7DF900D4F9B9 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.20;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		52A09CDB2F6C7DF900D4F9B9 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 52A09CDA2F6C7DF900D4F9B9 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A50000010000000000000002 /* Project object */;
 }

@@ -99,22 +99,12 @@ final class APKIconExtractor {
         let entries = parseAllIconEntries(from: badgingOutput)
         let iconPath = bestIconPath(from: badgingOutput)
 
-        let tempDir = FileManager.default.temporaryDirectory
-            .appendingPathComponent("ApkAnalyzer_icon_\(UUID().uuidString)", isDirectory: true)
-
-        do {
-            try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-        } catch {
-            return nil
-        }
-
-        defer {
-            try? FileManager.default.removeItem(at: tempDir)
-        }
+        guard let zip = APKZipReader(url: apkPath) else { return nil }
 
         // Strategy 1: Direct extraction using parsed raster icon path
         if let relPath = iconPath, !relPath.hasSuffix(".xml") {
-            if let image = extractDirect(from: apkPath, iconRelativePath: relPath, tempDir: tempDir) {
+            if let data = zip.extractEntry(path: relPath),
+               let image = UIImage(data: data) {
                 return IconResult(image: image, strategy: .directPath, sourcePath: relPath)
             }
         }
@@ -140,13 +130,13 @@ final class APKIconExtractor {
         }
 
         // Strategy 3: Scan mipmap/drawable directories for ic_launcher PNGs
-        if let (image, path) = extractByDensityScan(from: apkPath, tempDir: tempDir) {
-            return IconResult(image: image, strategy: .densityFallback, sourcePath: path)
+        if let result = extractByDensityScan(from: zip) {
+            return IconResult(image: result.0, strategy: .densityFallback, sourcePath: result.1)
         }
 
-        // Strategy 4: Any PNG in resource directories
-        if let (image, path) = extractAnyPNG(from: apkPath, tempDir: tempDir) {
-            return IconResult(image: image, strategy: .anyPNG, sourcePath: path)
+        // Strategy 4: Best square PNG in resources (handles obfuscated APKs)
+        if let result = extractBestSquarePNG(from: zip) {
+            return IconResult(image: result.0, strategy: .anyPNG, sourcePath: result.1)
         }
 
         return nil
@@ -159,138 +149,62 @@ final class APKIconExtractor {
 
     // MARK: - Extraction Strategies
 
-    /// Strategy 1: Extract the icon at the exact relative path inside the APK.
-    private func extractDirect(from apkPath: URL, iconRelativePath: String, tempDir: URL) -> UIImage? {
-        _ = try? ShellExecutor.shared.run(
-            "/usr/bin/unzip",
-            arguments: ["-o", apkPath.path, iconRelativePath, "-d", tempDir.path]
-        )
+    /// Strategy 3: Find ic_launcher PNGs/WebPs in mipmap/drawable directories.
+    private func extractByDensityScan(from zip: APKZipReader) -> (UIImage, String)? {
+        let candidates = zip.entries.filter { entry in
+            let p = entry.path.lowercased()
+            return (p.hasPrefix("res/mipmap-") || p.hasPrefix("res/drawable-")) &&
+                   (p.hasSuffix(".png") || p.hasSuffix(".webp")) &&
+                   p.contains("ic_launcher")
+        }.sorted { $0.uncompressedSize > $1.uncompressedSize }
 
-        let iconFile = tempDir.appendingPathComponent(iconRelativePath)
-
-        guard FileManager.default.fileExists(atPath: iconFile.path),
-              let data = try? Data(contentsOf: iconFile),
-              let image = UIImage(data: data) else {
-            return nil
+        for entry in candidates {
+            if let data = zip.extractEntry(path: entry.path),
+               let image = UIImage(data: data) {
+                return (image, entry.path)
+            }
         }
-
-        return image
+        return nil
     }
 
-    /// Strategy 2: Unzip all mipmap/drawable PNGs and WebPs, pick the largest ic_launcher.
-    private func extractByDensityScan(from apkPath: URL, tempDir: URL) -> (UIImage, String)? {
-        // Extract from standard directories
-        _ = try? ShellExecutor.shared.run(
-            "/usr/bin/unzip",
-            arguments: [
-                "-o", apkPath.path,
-                "res/mipmap-*/*.png", "res/mipmap-*/*.webp",
-                "res/drawable-*/*.png", "res/drawable-*/*.webp",
-                "-d", tempDir.path
-            ]
-        )
+    /// Strategy 4: Find the best square PNG that looks like a launcher icon.
+    /// Works for obfuscated APKs where resource names are mangled.
+    private func extractBestSquarePNG(from zip: APKZipReader) -> (UIImage, String)? {
+        // Filter to PNGs in res/ that are in the icon size range, skip 9-patch
+        let candidates = zip.entries.filter { entry in
+            let p = entry.path.lowercased()
+            return p.hasPrefix("res/") &&
+                   (p.hasSuffix(".png") || p.hasSuffix(".webp")) &&
+                   !p.contains(".9.") &&
+                   entry.uncompressedSize >= 1000 && entry.uncompressedSize <= 30000
+        }.sorted { $0.uncompressedSize > $1.uncompressedSize }
 
-        if let result = findBestIcon(in: tempDir, nameFilter: "ic_launcher") {
-            return result
-        }
-
-        // For obfuscated APKs: also extract flat res/*.png files
-        _ = try? ShellExecutor.shared.run(
-            "/usr/bin/unzip",
-            arguments: ["-o", apkPath.path, "res/*.png", "res/*.webp", "-d", tempDir.path]
-        )
-
-        return findBestIcon(in: tempDir, nameFilter: "ic_launcher")
-    }
-
-    /// Strategy 3: Last resort — find the best square PNG that looks like a launcher icon.
-    /// Uses `unzip -l` to list all PNGs, extracts candidates, and selects by dimensions.
-    private func extractAnyPNG(from apkPath: URL, tempDir: URL) -> (UIImage, String)? {
-        // First try what's already extracted
-        if let result = findBestSquareIcon(in: tempDir) {
-            return result
-        }
-
-        // List all PNG/WebP entries in the APK
-        guard let listResult = try? ShellExecutor.shared.run(
-            "/usr/bin/unzip", arguments: ["-l", apkPath.path]
-        ) else {
-            return nil
-        }
-        let listOutput = listResult.output
-        guard !listOutput.isEmpty else { return nil }
-
-        // Parse entries: pick res/*.png files in the icon file-size range (1KB–25KB)
-        let candidates = listOutput.components(separatedBy: "\n").compactMap { line -> (String, Int)? in
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            // Format: "  12345  2024-01-01 12:00  res/XX.png"
-            let parts = trimmed.split(separator: " ", maxSplits: 3)
-            guard parts.count >= 4 else { return nil }
-            let path = String(parts[3])
-            guard path.hasPrefix("res/"),
-                  path.hasSuffix(".png") || path.hasSuffix(".webp"),
-                  !path.contains(".9.") else { return nil } // Skip 9-patch
-            guard let size = Int(parts[0]), size >= 1000, size <= 30000 else { return nil }
-            return (path, size)
-        }.sorted { $0.1 > $1.1 } // Largest first
-
-        // Extract top candidates (limit to avoid excessive I/O)
-        let topPaths = candidates.prefix(15).map(\.0)
-        guard !topPaths.isEmpty else { return nil }
-
-        var args = ["-o", apkPath.path]
-        args.append(contentsOf: topPaths)
-        args.append(contentsOf: ["-d", tempDir.path])
-        _ = try? ShellExecutor.shared.run("/usr/bin/unzip", arguments: args)
-
-        return findBestSquareIcon(in: tempDir)
-    }
-
-    // MARK: - File Scanning
-
-    /// Standard Android launcher icon sizes (px).
-    private static let iconSizes: Set<Int> = [48, 72, 96, 128, 144, 192, 256, 512]
-
-    /// Finds the best square image that matches standard launcher icon dimensions.
-    private func findBestSquareIcon(in directory: URL) -> (UIImage, String)? {
-        guard let enumerator = FileManager.default.enumerator(
-            at: directory,
-            includingPropertiesForKeys: [.fileSizeKey, .isRegularFileKey]
-        ) else { return nil }
-
-        let supportedExtensions: Set<String> = ["png", "webp", "jpg", "jpeg"]
         var bestImage: UIImage?
-        var bestPixels: Int = 0
+        var bestPixels = 0
         var bestPath: String?
 
-        while let fileURL = enumerator.nextObject() as? URL {
-            let ext = fileURL.pathExtension.lowercased()
-            guard supportedExtensions.contains(ext),
-                  !fileURL.lastPathComponent.contains(".9.") else { continue }
-
-            guard let data = try? Data(contentsOf: fileURL),
+        for entry in candidates.prefix(20) {
+            guard let data = zip.extractEntry(path: entry.path),
                   let img = UIImage(data: data) else { continue }
 
             let w = Int(img.size.width * img.scale)
             let h = Int(img.size.height * img.scale)
-
-            // Must be square (or nearly square, within 5%)
             guard w > 0, h > 0 else { continue }
+
+            // Must be square (within 5% tolerance)
             let ratio = CGFloat(max(w, h)) / CGFloat(min(w, h))
             guard ratio <= 1.05 else { continue }
 
             let pixels = w * h
-
-            // Prefer standard icon sizes, then largest
-            let isStandardSize = Self.iconSizes.contains(w) || Self.iconSizes.contains(h)
-            let currentIsStandard = bestImage != nil && Self.iconSizes.contains(Int(sqrt(Double(bestPixels))))
+            let isStdSize = Self.iconSizes.contains(w) || Self.iconSizes.contains(h)
+            let curIsStd = bestImage != nil && Self.iconSizes.contains(Int(sqrt(Double(bestPixels))))
 
             if bestImage == nil ||
-               (isStandardSize && !currentIsStandard) ||
-               (isStandardSize == currentIsStandard && pixels > bestPixels) {
+               (isStdSize && !curIsStd) ||
+               (isStdSize == curIsStd && pixels > bestPixels) {
                 bestImage = img
                 bestPixels = pixels
-                bestPath = fileURL.path.replacingOccurrences(of: directory.path + "/", with: "")
+                bestPath = entry.path
             }
         }
 
@@ -300,42 +214,6 @@ final class APKIconExtractor {
         return nil
     }
 
-    /// Scans a directory for image files, optionally filtering by name, and returns the largest one.
-    private func findBestIcon(in directory: URL, nameFilter: String?) -> (UIImage, String)? {
-        guard let enumerator = FileManager.default.enumerator(
-            at: directory,
-            includingPropertiesForKeys: [.fileSizeKey, .isRegularFileKey]
-        ) else { return nil }
-
-        var bestImage: UIImage?
-        var bestSize: Int = 0
-        var bestPath: String?
-        let supportedExtensions: Set<String> = ["png", "webp", "jpg", "jpeg"]
-
-        while let fileURL = enumerator.nextObject() as? URL {
-            let ext = fileURL.pathExtension.lowercased()
-            guard supportedExtensions.contains(ext) else { continue }
-
-            if let filter = nameFilter,
-               !fileURL.lastPathComponent.lowercased().contains(filter.lowercased()) {
-                continue
-            }
-
-            let attrs = try? FileManager.default.attributesOfItem(atPath: fileURL.path)
-            let size = (attrs?[.size] as? Int) ?? 0
-
-            if size > bestSize,
-               let data = try? Data(contentsOf: fileURL),
-               let img = UIImage(data: data) {
-                bestImage = img
-                bestSize = size
-                bestPath = fileURL.path.replacingOccurrences(of: directory.path + "/", with: "")
-            }
-        }
-
-        if let image = bestImage {
-            return (image, bestPath ?? "unknown")
-        }
-        return nil
-    }
+    /// Standard Android launcher icon sizes (px).
+    private static let iconSizes: Set<Int> = [48, 72, 96, 128, 144, 192, 256, 512]
 }
