@@ -137,7 +137,7 @@ struct APKDetailView: View {
                 GroupBox {
                     VStack(alignment: .leading, spacing: 8) {
                         InfoRow(label: "Signer", value: metadata.signer)
-                        InfoRow(label: "Verified Scheme v1", value: metadata.v1SchemeVerified)
+                        InfoRow(label: "Signing Schemes", value: metadata.signingSchemes)
                     }
                     .padding(.vertical, 4)
                 } label: {

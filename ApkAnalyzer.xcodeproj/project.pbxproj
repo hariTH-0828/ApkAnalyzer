@@ -20,7 +20,6 @@
 		A1000001000000000000000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000A /* Assets.xcassets */; };
 		A1000001000000000000000B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000B /* Preview Assets.xcassets */; };
 		A1000001000000000000000C /* aapt2 in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000C /* aapt2 */; };
-		A1000001000000000000000D /* apksigner.jar in Resources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000000F /* apksigner.jar */; };
 		A10000010000000000000010 /* ShellExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000011 /* ShellExecutor.swift */; };
 		A10000010000000000000012 /* ShellHelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000012 /* ShellHelperProtocol.swift */; };
 		A10000010000000000000014 /* APKIconExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000014 /* APKIconExtractor.swift */; };
@@ -70,7 +69,7 @@
 		A2000001000000000000000C /* aapt2 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = aapt2; sourceTree = "<group>"; };
 		A2000001000000000000000D /* ApkAnalyzer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ApkAnalyzer.entitlements; sourceTree = "<group>"; };
 		A2000001000000000000000E /* ApkAnalyzer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ApkAnalyzer.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A2000001000000000000000F /* apksigner.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = apksigner.jar; sourceTree = "<group>"; };
+
 		A20000010000000000000011 /* ShellExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellExecutor.swift; sourceTree = "<group>"; };
 		A20000010000000000000012 /* ShellHelperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellHelperProtocol.swift; sourceTree = "<group>"; };
 		A20000010000000000000014 /* APKIconExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKIconExtractor.swift; sourceTree = "<group>"; };
@@ -195,7 +194,6 @@
 			isa = PBXGroup;
 			children = (
 				A2000001000000000000000C /* aapt2 */,
-				A2000001000000000000000F /* apksigner.jar */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -296,7 +294,6 @@
 				A1000001000000000000000A /* Assets.xcassets in Resources */,
 				A1000001000000000000000B /* Preview Assets.xcassets in Resources */,
 				A1000001000000000000000C /* aapt2 in Resources */,
-				A1000001000000000000000D /* apksigner.jar in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

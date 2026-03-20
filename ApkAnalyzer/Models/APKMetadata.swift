@@ -18,7 +18,7 @@ struct APKMetadata {
 
     // Signature
     let signer: String
-    let v1SchemeVerified: String
+    let signingSchemes: String
 
     // Icon
     let iconPath: String?
