@@ -278,7 +278,8 @@ final class APKExtractionService {
                 break
             }
         }
-        guard let eocd = eocdOffset else { return nil }
+        guard let eocd = eocdOffset,
+              eocd + 21 < tailBytes.count else { return nil }
 
         // Central Directory offset is at EOCD+16 (4 bytes LE)
         let cdOffset = UInt64(tailBytes[eocd+16]) |
@@ -288,8 +289,8 @@ final class APKExtractionService {
 
         // The APK Signing Block magic "APK Sig Block 42" (16 bytes) ends just before cdOffset.
         // Before the magic are 8 bytes of block size.
-        let magic = "APK Sig Block 42".data(using: .ascii)!
-        guard cdOffset >= 24 else { return nil } // at minimum magic(16) + size(8)
+        guard let magic = "APK Sig Block 42".data(using: .ascii),
+              cdOffset >= 24 else { return nil } // at minimum magic(16) + size(8)
 
         handle.seek(toFileOffset: cdOffset - 24)
         let trailer = handle.readData(ofLength: 24)
@@ -300,11 +301,12 @@ final class APKExtractionService {
 
         // block size (8 bytes LE) - this is the size from block_start+8 to end of magic
         let blockSize = trailer.withUnsafeBytes { $0.loadUnaligned(fromByteOffset: 0, as: UInt64.self) }
+        guard blockSize > 24, blockSize <= cdOffset - 8 else { return nil }
         let blockStart = cdOffset - 8 - blockSize  // points to the first 8-byte size field
 
         // Read the signing block pairs region
         // Structure: [block_size_begin (8)] [pairs...] [block_size_end (8)] [magic (16)]
-        guard blockSize > 24, blockStart + 8 < cdOffset - 24 else { return nil }
+        guard blockStart + 8 < cdOffset - 24 else { return nil }
         let pairsStart = blockStart + 8
         let pairsEnd = cdOffset - 24  // just before block_size_end
 
@@ -323,12 +325,14 @@ final class APKExtractionService {
 
         var offset = 0
         while offset + 12 <= pairsData.count {
-            let pairSize: UInt64 = pairsData.withUnsafeBytes { $0.loadUnaligned(fromByteOffset: offset, as: UInt64.self) }
-            let pairID: UInt32 = pairsData.withUnsafeBytes { $0.loadUnaligned(fromByteOffset: offset + 8, as: UInt32.self) }
+            let pairSize = pairsData.withUnsafeBytes { $0.loadUnaligned(fromByteOffset: offset, as: UInt64.self) }
+            guard pairSize >= 4, pairSize <= UInt64(pairsData.count - offset - 8) else { break }
+
+            let pairID = pairsData.withUnsafeBytes { $0.loadUnaligned(fromByteOffset: offset + 8, as: UInt32.self) }
             let dataStart = offset + 12
             let dataLen = Int(pairSize) - 4 // pairSize includes the 4-byte ID
 
-            guard dataLen >= 0, dataStart + dataLen <= pairsData.count else { break }
+            guard dataStart + dataLen <= pairsData.count else { break }
 
             if pairID == v2ID {
                 foundV2 = true
@@ -342,7 +346,9 @@ final class APKExtractionService {
                 }
             }
 
-            offset += 8 + Int(pairSize)
+            let nextOffset = offset + 8 + Int(pairSize)
+            guard nextOffset > offset else { break } // prevent infinite loop on bad data
+            offset = nextOffset
         }
 
         guard foundV2 || foundV3 else { return nil }
@@ -355,35 +361,37 @@ final class APKExtractionService {
     ///   certs_data: cert_len(4) → cert_DER_data
     private func extractCertFromV2Signer(_ data: Data) -> Data? {
         guard data.count > 20 else { return nil }
-        let bytes = data.withUnsafeBytes { ptr -> UnsafeRawBufferPointer in ptr }
 
-        func readU32(_ offset: Int) -> Int? {
-            guard offset + 4 <= data.count else { return nil }
-            return Int(bytes.loadUnaligned(fromByteOffset: offset, as: UInt32.self))
+        return data.withUnsafeBytes { bytes -> Data? in
+            func readU32(_ offset: Int) -> Int? {
+                guard offset >= 0, offset + 4 <= data.count else { return nil }
+                let value = bytes.loadUnaligned(fromByteOffset: offset, as: UInt32.self)
+                return Int(value)
+            }
+
+            // signers_seq_len → first signer_len → signed_data_len → signed_data
+            guard let signersSeqLen = readU32(0), signersSeqLen > 0 else { return nil }
+            guard let signerLen = readU32(4), signerLen > 0 else { return nil }
+            guard let signedDataLen = readU32(8), signedDataLen > 0,
+                  12 + signedDataLen <= data.count else { return nil }
+            let signedDataStart = 12
+
+            // First field of signed_data: digests sequence
+            guard let digestsSeqLen = readU32(signedDataStart), digestsSeqLen >= 0 else { return nil }
+            let certsSeqOffset = signedDataStart + 4 + digestsSeqLen
+            guard certsSeqOffset >= signedDataStart + 4, certsSeqOffset < data.count else { return nil }
+
+            // certificates sequence
+            guard let certsSeqLen = readU32(certsSeqOffset), certsSeqLen > 0 else { return nil }
+            let firstCertOffset = certsSeqOffset + 4
+            guard firstCertOffset > certsSeqOffset, firstCertOffset < data.count else { return nil }
+
+            // first certificate: length-prefixed DER data
+            guard let certLen = readU32(firstCertOffset), certLen > 0,
+                  firstCertOffset + 4 + certLen <= data.count else { return nil }
+
+            return data.subdata(in: (firstCertOffset + 4)..<(firstCertOffset + 4 + certLen))
         }
-
-        // signers_seq_len → first signer_len → signed_data_len → signed_data
-        guard let signersSeqLen = readU32(0), signersSeqLen > 0 else { return nil }
-        // first signer starts at offset 4
-        guard let signerLen = readU32(4), signerLen > 0 else { return nil }
-        // signed_data starts at offset 8
-        guard let signedDataLen = readU32(8), signedDataLen > 0 else { return nil }
-        // signed_data body starts at offset 12
-        let signedDataStart = 12
-
-        // First field of signed_data: digests sequence
-        guard let digestsSeqLen = readU32(signedDataStart) else { return nil }
-        let certsSeqOffset = signedDataStart + 4 + digestsSeqLen
-
-        // certificates sequence
-        guard let certsSeqLen = readU32(certsSeqOffset), certsSeqLen > 0 else { return nil }
-        let firstCertOffset = certsSeqOffset + 4
-
-        // first certificate: length-prefixed DER data
-        guard let certLen = readU32(firstCertOffset), certLen > 0,
-              firstCertOffset + 4 + certLen <= data.count else { return nil }
-
-        return data.subdata(in: (firstCertOffset + 4)..<(firstCertOffset + 4 + certLen))
     }
 
     /// Parses a PKCS#7 / CMS signature block to extract the signer certificate's subject DN.
