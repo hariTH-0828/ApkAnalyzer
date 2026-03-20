@@ -127,6 +127,14 @@ final class APKIconExtractor {
                     return IconResult(image: image, strategy: .vectorRendered, sourcePath: entry.path)
                 }
             }
+
+            // Strategy 2.5: Directly resolve adaptive icon PNG layers via resource dump.
+            // Handles obfuscated APKs where the vector parser's complex resolution chain may fail.
+            if let xmlPath = iconPath, xmlPath.hasSuffix(".xml") {
+                if let result = extractAdaptiveIconPNGs(from: apkPath, iconXml: xmlPath, aapt2Path: toolPath, zip: zip) {
+                    return IconResult(image: result.0, strategy: .densityFallback, sourcePath: result.1)
+                }
+            }
         }
 
         // Strategy 3: Scan mipmap/drawable directories for ic_launcher PNGs
@@ -148,6 +156,60 @@ final class APKIconExtractor {
     }
 
     // MARK: - Extraction Strategies
+
+    /// Strategy 2.5: Directly resolve adaptive icon foreground PNGs via aapt2 resource dump.
+    /// Bypasses the vector parser's complex XML → resolveLayer → resolveDrawableReference chain.
+    private func extractAdaptiveIconPNGs(from apkPath: URL, iconXml: String, aapt2Path: String, zip: APKZipReader) -> (UIImage, String)? {
+        // Step 1: Dump the XML tree to find resource references
+        guard let xmlResult = try? ShellExecutor.shared.run(
+            aapt2Path, arguments: ["dump", "xmltree", apkPath.path, "--file", iconXml]
+        ), !xmlResult.output.isEmpty else { return nil }
+
+        // Look for foreground drawable resource ref: @0x7fXXXXXX
+        let refPattern = "foreground[\\s\\S]*?drawable.*?=(@0x[0-9a-fA-F]+)"
+        guard let refRegex = try? NSRegularExpression(pattern: refPattern),
+              let refMatch = refRegex.firstMatch(in: xmlResult.output, range: NSRange(xmlResult.output.startIndex..., in: xmlResult.output)),
+              refMatch.numberOfRanges >= 2 else { return nil }
+        let foregroundRef = (xmlResult.output as NSString).substring(with: refMatch.range(at: 1))
+        let cleanRef = foregroundRef.replacingOccurrences(of: "@", with: "")
+
+        // Step 2: Dump resources to find PNG file paths for this resource ID
+        guard let resResult = try? ShellExecutor.shared.run(
+            aapt2Path, arguments: ["dump", "resources", apkPath.path],
+            timeout: 10
+        ), !resResult.output.isEmpty else { return nil }
+
+        var foundResource = false
+        var pngPaths: [String] = []
+        for line in resResult.output.components(separatedBy: "\n") {
+            if line.contains(cleanRef) {
+                foundResource = true
+                continue
+            }
+            if foundResource {
+                if line.contains("resource ") { break }
+                let trimmed = line.trimmingCharacters(in: .whitespaces)
+                if let resRange = trimmed.range(of: "res/") {
+                    var path = String(trimmed[resRange.lowerBound...])
+                    if let typeRange = path.range(of: " type=") {
+                        path = String(path[..<typeRange.lowerBound])
+                    }
+                    if path.hasSuffix(".png") || path.hasSuffix(".webp") {
+                        pngPaths.append(path)
+                    }
+                }
+            }
+        }
+
+        // Step 3: Extract highest density PNG (last in the list = highest density)
+        for path in pngPaths.reversed() {
+            if let data = zip.extractEntry(path: path), let image = UIImage(data: data) {
+                return (image, path)
+            }
+        }
+
+        return nil
+    }
 
     /// Strategy 3: Find ic_launcher PNGs/WebPs in mipmap/drawable directories.
     private func extractByDensityScan(from zip: APKZipReader) -> (UIImage, String)? {
@@ -183,7 +245,7 @@ final class APKIconExtractor {
         var bestPixels = 0
         var bestPath: String?
 
-        for entry in candidates.prefix(20) {
+        for entry in candidates.prefix(30) {
             guard let data = zip.extractEntry(path: entry.path),
                   let img = UIImage(data: data) else { continue }
 
@@ -195,9 +257,12 @@ final class APKIconExtractor {
             let ratio = CGFloat(max(w, h)) / CGFloat(min(w, h))
             guard ratio <= 1.05 else { continue }
 
+            // Skip images larger than 512px — unlikely to be app icons
+            guard max(w, h) <= 512 else { continue }
+
             let pixels = w * h
             let isStdSize = Self.iconSizes.contains(w) || Self.iconSizes.contains(h)
-            let curIsStd = bestImage != nil && Self.iconSizes.contains(Int(sqrt(Double(bestPixels))))
+            let curIsStd = bestImage != nil && (Self.iconSizes.contains(Int(sqrt(Double(bestPixels)))))
 
             if bestImage == nil ||
                (isStdSize && !curIsStd) ||
@@ -214,6 +279,6 @@ final class APKIconExtractor {
         return nil
     }
 
-    /// Standard Android launcher icon sizes (px).
-    private static let iconSizes: Set<Int> = [48, 72, 96, 128, 144, 192, 256, 512]
+    /// Standard Android launcher icon sizes (px), including adaptive icon layer sizes.
+    private static let iconSizes: Set<Int> = [48, 72, 96, 108, 128, 144, 162, 192, 216, 256, 324, 432, 512]
 }

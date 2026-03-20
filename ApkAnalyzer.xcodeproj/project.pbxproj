@@ -25,6 +25,10 @@
 		A10000010000000000000014 /* APKIconExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000014 /* APKIconExtractor.swift */; };
 		A10000010000000000000015 /* APKVectorIconParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000015 /* APKVectorIconParser.swift */; };
 		A10000010000000000000016 /* APKZipReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000016 /* APKZipReader.swift */; };
+		A10000010000000000000017 /* BadgingParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000017 /* BadgingParser.swift */; };
+		A10000010000000000000018 /* APKSignatureExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000018 /* APKSignatureExtractor.swift */; };
+		A10000010000000000000019 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000019 /* DocumentPicker.swift */; };
+		A1000001000000000000001A /* APKAnalyzing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000001A /* APKAnalyzing.swift */; };
 		B10000010000000000000001 /* ShellHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000010000000000000001 /* ShellHelper.swift */; };
 		B10000010000000000000002 /* ShellHelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000012 /* ShellHelperProtocol.swift */; };
 		B10000010000000000000003 /* ShellHelper.bundle in Embed Bundles */ = {isa = PBXBuildFile; fileRef = B20000010000000000000003 /* ShellHelper.bundle */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -75,6 +79,10 @@
 		A20000010000000000000014 /* APKIconExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKIconExtractor.swift; sourceTree = "<group>"; };
 		A20000010000000000000015 /* APKVectorIconParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKVectorIconParser.swift; sourceTree = "<group>"; };
 		A20000010000000000000016 /* APKZipReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKZipReader.swift; sourceTree = "<group>"; };
+		A20000010000000000000017 /* BadgingParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgingParser.swift; sourceTree = "<group>"; };
+		A20000010000000000000018 /* APKSignatureExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKSignatureExtractor.swift; sourceTree = "<group>"; };
+		A20000010000000000000019 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
+		A2000001000000000000001A /* APKAnalyzing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APKAnalyzing.swift; sourceTree = "<group>"; };
 		B20000010000000000000001 /* ShellHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellHelper.swift; sourceTree = "<group>"; };
 		B20000010000000000000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B20000010000000000000003 /* ShellHelper.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShellHelper.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -114,6 +122,7 @@
 				A20000010000000000000001 /* ApkAnalyzerApp.swift */,
 				A2000001000000000000000D /* ApkAnalyzer.entitlements */,
 				A40000010000000000000003 /* Models */,
+				A4000001000000000000000B /* Protocols */,
 				A40000010000000000000004 /* Services */,
 				A40000010000000000000005 /* ViewModels */,
 				A40000010000000000000006 /* Views */,
@@ -137,6 +146,8 @@
 			isa = PBXGroup;
 			children = (
 				A20000010000000000000008 /* APKExtractionService.swift */,
+				A20000010000000000000017 /* BadgingParser.swift */,
+				A20000010000000000000018 /* APKSignatureExtractor.swift */,
 				A20000010000000000000014 /* APKIconExtractor.swift */,
 				A20000010000000000000015 /* APKVectorIconParser.swift */,
 				A20000010000000000000016 /* APKZipReader.swift */,
@@ -161,6 +172,7 @@
 				A20000010000000000000003 /* APKDropZoneView.swift */,
 				A20000010000000000000004 /* APKDetailView.swift */,
 				A20000010000000000000005 /* ErrorBannerView.swift */,
+				A20000010000000000000019 /* DocumentPicker.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -205,6 +217,14 @@
 				B20000010000000000000002 /* Info.plist */,
 			);
 			path = ShellHelper;
+			sourceTree = "<group>";
+		};
+		A4000001000000000000000B /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				A2000001000000000000001A /* APKAnalyzing.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -325,6 +345,10 @@
 				A10000010000000000000014 /* APKIconExtractor.swift in Sources */,
 				A10000010000000000000015 /* APKVectorIconParser.swift in Sources */,
 				A10000010000000000000016 /* APKZipReader.swift in Sources */,
+				A10000010000000000000017 /* BadgingParser.swift in Sources */,
+				A10000010000000000000018 /* APKSignatureExtractor.swift in Sources */,
+				A10000010000000000000019 /* DocumentPicker.swift in Sources */,
+				A1000001000000000000001A /* APKAnalyzing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

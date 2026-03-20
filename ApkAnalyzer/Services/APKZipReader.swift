@@ -23,7 +23,7 @@ final class APKZipReader {
     /// Opens a ZIP (APK) file.
     /// Returns `nil` if the file cannot be opened or is not a valid ZIP.
     init?(url: URL) {
-        guard let archive = Archive(url: url, accessMode: .read) else { return nil }
+        guard let archive = try? Archive(url: url, accessMode: .read, pathEncoding: .utf8) else { return nil }
         self.archive = archive
         self.entries = archive.compactMap { zipEntry -> Entry? in
             guard zipEntry.type == .file else { return nil }

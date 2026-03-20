@@ -502,8 +502,17 @@ struct XmlTreeParser {
         let key = (line as NSString).substring(with: match.range(at: 2))
         var value = (line as NSString).substring(with: match.range(at: 3))
 
-        // Clean up value — remove dimension suffixes for dimension values
+        // Clean up value
         value = value.trimmingCharacters(in: .whitespaces)
+
+        // Strip aapt2's (Raw: "...") suffix and surrounding quotes from string values
+        // e.g. "M735.6Z" (Raw: "M735.6Z") → M735.6Z
+        if let rawRange = value.range(of: " (Raw: ") {
+            value = String(value[..<rawRange.lowerBound])
+        }
+        if value.hasPrefix("\"") && value.hasSuffix("\"") && value.count >= 2 {
+            value = String(value.dropFirst().dropLast())
+        }
 
         let depth = indent.count / 2
         return (depth, key, value)
@@ -820,10 +829,13 @@ final class APKVectorIconParser {
             }
         }
 
-        // Check for nested vector or other elements
+        // Check for nested vector, inset, or other elements
         for child in node.children {
             if child.tag == "vector" {
                 return renderVector(child, outputSize: outputSize)
+            } else if child.tag == "inset" {
+                // <inset> wraps a drawable reference — resolve it recursively
+                return resolveLayer(child, apkPath: apkPath, outputSize: outputSize)
             } else if child.tag == "color" || child.tag == "drawable" {
                 if let colorStr = child.attributes["color"] ?? child.attributes["drawable"],
                    let color = XmlTreeParser.parseColor(colorStr) {
@@ -840,11 +852,11 @@ final class APKVectorIconParser {
         let cleanRef = ref.replacingOccurrences(of: "@", with: "")
         guard let resourceDump = dumpResources(apkPath: apkPath) else { return nil }
 
-        // Find the resource entry and its file path
-        // Look for the resource ID, then find associated file paths
+        // Find the resource entry and its file path or color value
         let lines = resourceDump.components(separatedBy: "\n")
         var foundResource = false
         var candidatePaths: [String] = []
+        var colorValue: String?
 
         for line in lines {
             if line.contains(cleanRef) {
@@ -855,16 +867,31 @@ final class APKVectorIconParser {
                 // Resource entries list configurations and file paths
                 if line.contains("resource ") { break }  // Next resource
                 let trimmed = line.trimmingCharacters(in: .whitespaces)
-                // Extract file path from lines like "(v26) res/drawable-v24/ic_launcher_foreground.xml"
-                let parts = trimmed.components(separatedBy: " ")
-                if let path = parts.last, path.hasPrefix("res/") {
+                // Extract file path from lines like "(xxhdpi) (file) res/NC.png type=PNG"
+                if let resRange = trimmed.range(of: "res/") {
+                    var path = String(trimmed[resRange.lowerBound...])
+                    // Strip trailing " type=XXX" suffix if present
+                    if let typeRange = path.range(of: " type=") {
+                        path = String(path[..<typeRange.lowerBound])
+                    }
                     candidatePaths.append(path)
+                } else if trimmed.contains("#") {
+                    // Color value: e.g. "() #ffffffff"
+                    if let hashIdx = trimmed.firstIndex(of: "#") {
+                        colorValue = String(trimmed[hashIdx...])
+                    }
                 }
             }
         }
 
-        // Try XML vector drawables first, then raster images
-        for path in candidatePaths {
+        // If the resource is a color value, render a solid color image
+        if candidatePaths.isEmpty, let colorStr = colorValue,
+           let color = XmlTreeParser.parseColor(colorStr) {
+            return solidColorImage(color: color, size: outputSize)
+        }
+
+        // Try XML vector drawables first, then raster images (prefer last = highest density)
+        for path in candidatePaths.reversed() {
             if path.hasSuffix(".xml") {
                 if let image = renderIcon(from: apkPath, iconXmlPath: path) {
                     return image
@@ -872,9 +899,9 @@ final class APKVectorIconParser {
             }
         }
 
-        // Try raster images via native ZIP reader
+        // Try raster images via native ZIP reader (prefer last = highest density)
         if let zip = APKZipReader(url: apkPath) {
-            for path in candidatePaths where !path.hasSuffix(".xml") {
+            for path in candidatePaths.reversed() where !path.hasSuffix(".xml") {
                 if let data = zip.extractEntry(path: path), let image = UIImage(data: data) {
                     return image
                 }
